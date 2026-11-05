@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %pip install -U databricks-vectorsearch
+# %pip install -U databricks-vectorsearch
 
 # COMMAND ----------
 
