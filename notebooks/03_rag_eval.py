@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %pip install -U "mlflow[databricks]>=3.4" databricks-vectorsearch databricks-sdk openai
+# %pip install -U "mlflow[databricks]>=3.4" databricks-vectorsearch databricks-sdk openai
 
 # COMMAND ----------
 
