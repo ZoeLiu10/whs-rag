@@ -67,7 +67,7 @@ def retrieve(question: str) -> list[Document]:
         Document(
             id=chunk_id,
             page_content=text,
-            metadata={"doc_uri": f"{file_name}#p{page}", "section": section, "score": score},
+            metadata={"doc_uri": citation.source_label(file_name, page), "section": section, "score": score},
         )
         for chunk_id, file_name, section, page, text, score in res["result"]["data_array"]
     ]
@@ -97,7 +97,7 @@ def rag_app(question: str) -> str:
             {"role": "user", "content": f"Context:\n{format_context(docs)}\n\nQuestion: {question}"},
         ],
     )
-    return message_text(resp.choices[0].message)
+    return citation.normalize_citations(message_text(resp.choices[0].message))
 
 # COMMAND ----------
 

@@ -4,3 +4,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.format]
+# Golden set is read-only and hand-aligned; lint it but don't reformat it.
+exclude = ["src/whs_rag/golden_set.py"]

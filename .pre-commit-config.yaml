@@ -1,0 +1,11 @@
+# Runs on every `git commit` once installed with `make install` (or `pre-commit install`).
+# If a hook fixes files, the commit stops: review the changes, `git add` them and commit again.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.3
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        files: ^(src|tests)/
+      - id: ruff-format
+        files: ^(src|tests)/
