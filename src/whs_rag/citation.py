@@ -7,6 +7,7 @@ CITATION_RE = re.compile(r"\[[^\]]+\.pdf#p\d+\]")
 def has_citation(text):
     return bool(CITATION_RE.search(text or ""))
 
+
 def source_label(file_name, page):
     """Build the label shown to the model, e.g. first_aid_in_the_work.pdf#p14.
     AI Search returns numeric columns as floats (14.0), so cast to int."""

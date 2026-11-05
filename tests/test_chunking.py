@@ -6,12 +6,14 @@ def el(type_, content, page=0):
 
 
 def test_heading_starts_new_chunk_and_sets_section():
-    chunks = chunk_elements([
-        el("section_header", "Trenches"),
-        el("text", "Shore trenches 1.5 m or deeper.", page=25),
-        el("section_header", "Lighting"),
-        el("text", "Bricklaying needs 160 lux.", page=84),
-    ])
+    chunks = chunk_elements(
+        [
+            el("section_header", "Trenches"),
+            el("text", "Shore trenches 1.5 m or deeper.", page=25),
+            el("section_header", "Lighting"),
+            el("text", "Bricklaying needs 160 lux.", page=84),
+        ]
+    )
     assert [c["section"] for c in chunks] == ["Trenches", "Lighting"]
     assert "1.5 m" in chunks[0]["text"] and "160 lux" in chunks[1]["text"]
 
@@ -33,11 +35,13 @@ def test_page_is_one_based_and_taken_from_first_element():
 
 
 def test_missing_page_and_empty_content_are_handled():
-    chunks = chunk_elements([
-        el("text", "   "),
-        el("text", None),
-        {"type": "text", "content": "no page", "page": float("nan")},
-    ])
+    chunks = chunk_elements(
+        [
+            el("text", "   "),
+            el("text", None),
+            {"type": "text", "content": "no page", "page": float("nan")},
+        ]
+    )
     assert chunks == [{"section": "", "page": None, "text": "no page"}]
 
 

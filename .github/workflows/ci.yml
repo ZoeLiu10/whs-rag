@@ -17,8 +17,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
-      - name: Lint
-        run: ruff check src tests
+      - name: Lint and format check
+        run: make lint
       - name: Unit and data tests
         run: pytest -q
       - uses: databricks/setup-cli@main
