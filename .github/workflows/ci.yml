@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Fast and free: runs on every push to a PR branch.
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check src tests
+      - name: Unit and data tests
+        run: pytest -q
+      - uses: databricks/setup-cli@main
+      - name: Validate bundle
+        run: databricks bundle validate -t dev
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+  # Quality gate: deploy this branch and run the golden-set eval. Fails if a score drops below EVAL_GATES.
+  eval:
+    needs: checks
+    runs-on: ubuntu-latest
+    concurrency: databricks-dev          # one deploy/eval at a time on the shared workspace
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - name: Deploy branch to dev
+        run: databricks bundle deploy -t dev --var="git_commit=${{ github.event.pull_request.head.sha }}"
+      - name: Run eval job (waits for the result)
+        run: databricks bundle run -t dev eval_job

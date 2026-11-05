@@ -1,0 +1,32 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_ingest:
+        description: "Also re-run ingestion (needed after chunking or document changes)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: databricks-dev
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - name: Validate
+        run: databricks bundle validate -t dev
+      - name: Deploy main
+        run: databricks bundle deploy -t dev --var="git_commit=${{ github.sha }}"
+      - name: Re-run ingestion
+        if: ${{ inputs.run_ingest }}
+        run: databricks bundle run -t dev ingest_job
